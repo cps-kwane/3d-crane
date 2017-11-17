@@ -101,7 +101,7 @@ quantized_path=[(0,0)]
 combined=[(0,0)]
 
 
-# This can be converted to recursive to be able to solve very complex mazes (AI) - now it may get for too many obstacles
+# This can be converted to recursive to be able to solve very complex mazes (AI) - now it may get for too many obstacles - BUG: works as gready
 for n in range(len(min_path)-1):
 	y,x = min_path[n]
 	

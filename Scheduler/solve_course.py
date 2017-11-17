@@ -146,7 +146,7 @@ if debug: print "%d/%d"%(len(min_path)-1, len(min_path)-1)
 comp_path = [(0,0)]
 for n in range(1,len(quantized_path)-1):
 	prev, cur, next = quantized_path[n-1], quantized_path[n], quantized_path[n+1]
-	if ((prev[0]-cur[0]!=cur[0]-next[0]) or (prev[1]-cur[1]!=cur[1]-next[1]) and (prev!=cur)):
+	if ((prev[0]-cur[0]!=cur[0]-next[0]) or (prev[1]-cur[1]!=cur[1]-next[1])) and (prev!=cur):
 		comp_path.append(cur)
 comp_path.append(quantized_path[-1])
 
