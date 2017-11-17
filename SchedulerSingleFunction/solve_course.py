@@ -84,7 +84,7 @@ def a_star(start, goal):
 					#score = d + 0.1*length + 0.1*count_obstacle_neighbours((y0,x0)) 
 					#score = d + 4 * obstacle_heatmap[y][x] + 0.1* length	
 					#score = d**2 #+ obstacle_heatmap[y][x] * length		
-					score = d*(0.1+obstacle_heatmap[y][x]) + 0.1*length 	
+					score = d*(0.1+obstacle_heatmap[y][x]) #+ 0.1*length 	
 					
 					#print score
 					#print queue[0:5]
