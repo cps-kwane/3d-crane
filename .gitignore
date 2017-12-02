@@ -1,2 +1,6 @@
 # Simulink generated directory 
 slprj/
+
+# MATLAB
+*.r2016b
+*.asv
