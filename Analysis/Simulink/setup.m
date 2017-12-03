@@ -32,10 +32,9 @@ TyCoulomb = 1.8;
 TzVisc = 342; 
 
 % PID parameters
-Ki = 0.06;
-Kia = -0.3;
-Kp = 4.5;
-Kpa = 4;
+Ki = 0.1419;
+Kia = 1.3061;
+Kpa = 1.3061;
 
 Kix = -0.08;
 kiax = 13.56;

@@ -4,3 +4,6 @@ slprj/
 # MATLAB
 *.r2016b
 *.asv
+
+# courses
+*.png

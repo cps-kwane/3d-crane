@@ -1,5 +1,6 @@
 %% Calculate Score based on targets, obstacles, and time
-function [score, tarN] = simple_getScore(simout, obstacles, targets, j, showPlot)
+function [score, tarN, obsN, payloadX, payloadY, alphaX, alphaY] = ...
+    simple_getScore(simout, obstacles, targets, j, showPlot)
 % SIMPLE_GETSCORE get the score from simulation output and plot it if
 % desired.
 
@@ -63,38 +64,48 @@ tMax = 10*60;
 
 % Check how many targets were hit
 for i = 1:size(targets,1)
-   target = targets(i,:); 
-   target = coordsToMeters(target);
+  target = targets(i,:); 
+  target = coordsToMeters(target);
 
-   % Index of payload positions within the target area
-   ind = (payloadX(:,1) <= target(1) + 0.01) & (payloadX(:,1) >= target(1) - 0.01) & (payloadY(:,1) <= target(2) + 0.01) & (payloadY(:,1) >= target(2) - 0.01);       
+  % Index of payload positions within the target area
+  ind = (payloadX(:,1) <= target(1) + delta) & ...
+        (payloadX(:,1) >= target(1) - delta) & ...
+        (payloadY(:,1) <= target(2) + delta) & ...
+        (payloadY(:,1) >= target(2) - delta);       
 
-   if(sum(ind) > 0)
-        tarN = tarN + 1; % Target was hit
-        tReached = min(timeV(ind,1)); % The first point in time at which the target was hit       
-        if(tReached >= tComplete) 
-            tComplete = tReached; % The point in time at which the last target was hit
-        end
+  if(sum(ind) > 0)
+    % Target was hit
+    tarN = tarN + 1; 
+    % The first point in time at which the target was hit       
+    tReached = min(timeV(ind,1)); 
+
+    if (tReached >= tComplete)
+      % The point in time at which the last target was hit
+      tComplete = tReached;
+    end
    end
 end
 
-if(tarN ~= size(targets, 1))
-    tComplete = tMax; % Set tComplete to tMax if not all targets were reached
+if (tarN ~= size(targets, 1))
+  tComplete = tMax; % Set tComplete to tMax if not all targets were reached
 else
-    tComplete = min(tComplete, tMax); % Check if time limit was reached
+  tComplete = min(tComplete, tMax); % Check if time limit was reached
 end
 
 % Check how many obstacles were hit
 for i = 1:size(obstacles,1)
-   obstacle = obstacles(i,:); 
-   obstacle = coordsToMeters(obstacle);
+  obstacle = obstacles(i,:); 
+  obstacle = coordsToMeters(obstacle);
 
-   % Index of payload positions within the obstacle area
-   ind = (payloadX(:,1) <= obstacle(1) + 0.01) & (payloadX(:,1) >= obstacle(1) - 0.01) & (payloadY(:,1) <= obstacle(2) + 0.01) & (payloadY(:,1) >= obstacle(2) - 0.01);
+  % Index of payload positions within the obstacle area
+  ind = (payloadX(:,1) <= obstacle(1) + delta) & ...
+        (payloadX(:,1) >= obstacle(1) - delta) & ...
+        (payloadY(:,1) <= obstacle(2) + delta) & ...
+        (payloadY(:,1) >= obstacle(2) - delta);
 
-   if(sum(ind) > 0)
-      obsN = obsN + 1; % Obstacle was hit
-   end
+  if(sum(ind) > 0)
+    obsN = obsN + 1; % Obstacle was hit
+  end
 end
 
 % Calculate score
