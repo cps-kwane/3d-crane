@@ -1,0 +1,19 @@
+Assumptions to be checked
+
+	Oscillation Angle <=0.15 (θ) until we arrive to waypoint. Angle should then be <=0.02.
+Justification: Distance travelled = 0.3 * sin( θ)  
+This implies that in the worst case, the payload should never be 0.008 cm away from the position of the cart.
+	Maximum Overshoot = 0.9 cm.
+Justification: Payload Position = Cart Target + Cart Overshoot + Oscillation Angle  
+
+Allowed Cart Position Overshoot is 1-0.008 in the worst-case to avoid going out of the defined target. This implies that the maximum overshoot allowed is 0.9cm while having a 0.002 buffer.
+
+	Settling Value= +/- 0.4 cm from Cart Target.
+Justification: Payload Position = Cart Target + Settling Tolerance + Oscillation Angle
+
+Allowed settling value must guarantee that we are not 0.01 cm within the box bunds to avoid payload oscillation from hitting a nearby object upon leaving a target.
+
+	Rise Time & Settling Time should be low; no hard constraints. Starting with settling time of 4 seconds.
+
+
+
