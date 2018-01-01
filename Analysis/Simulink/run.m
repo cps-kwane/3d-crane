@@ -8,10 +8,10 @@ start_course = 1;
 
 %% Run
 % Setup the model name
-modelName = 'high_level_v3';
+model_name = 'high_level_v3';
 
 % Run the simulation
-simout = sim(modelName, 'FixedStep', num2str(Ts), 'ReturnWorkspaceOutputs', 'on');
+simout = sim(model_name, 'FixedStep', num2str(Ts), 'ReturnWorkspaceOutputs', 'on');
 
 % Get simulation output score
 [mscore, tarN, obsN, payloadX, payloadY, alphaX, alphaY] = ...
