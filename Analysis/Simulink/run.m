@@ -4,11 +4,11 @@ ywaypoints = targets(:, 2) / 100;
 index = 1;
 total_waypoints = length(xwaypoints);
 
-START_COURSE = 1;
+start_course = 1;
 
 %% Run
 % Setup the model name
-modelName = 'high_level_v2';
+modelName = 'high_level_v3';
 
 % Run the simulation
 simout = sim(modelName, 'FixedStep', num2str(Ts), 'ReturnWorkspaceOutputs', 'on');
