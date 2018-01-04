@@ -1,0 +1,26 @@
+CC     = "C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\bin\lcc64.exe"
+LD     = "C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\bin\lcclnk64.exe"
+LIBCMD = "C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\bin\lcclib64.exe"
+CFLAGS = -dll -noregistrylookup  -c -Zp8 -DLCC_WIN64 -DMATLAB_MEX_FILE -DMX_COMPAT_32 -nodeclspec 
+LDFLAGS = -s -dll -L"C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\lib64" -entry LibMain -map sfun.map 
+LIBFLAGS = 
+
+OBJECTS = \
+	"kwane_crane_sfun.obj"\
+	"c1_kwane_crane.obj"\
+	"kwane_crane_sfun_registry.obj"\
+	"lccstub.obj"\
+
+INCLUDE_PATH= -I"C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\include64"  -I"C:\Program Files\MATLAB\R2016b\extern\include"  -I"C:\Program Files\MATLAB\R2016b\simulink\include"  -I"C:\Program Files\MATLAB\R2016b\simulink\include\sf_runtime"  -I"C:\Program Files\MATLAB\R2016b\stateflow\c\mex\include"  -I"C:\Program Files\MATLAB\R2016b\rtw\c\src"  -I"C:\Users\nadeen\Desktop\Final_Neat_Crane\1- Run_Model_Folder\slprj\_sfprj\kwane_crane\_self\sfun\src" 
+ 
+
+kwane_crane_sfun.mexw64 : $(MAKEFILE) $(OBJECTS)
+	$(LD) $(LDFLAGS) -o kwane_crane_sfun.mexw64 @kwane_crane_sfun.lmko
+kwane_crane_sfun.obj :	"kwane_crane_sfun.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "kwane_crane_sfun.c"
+c1_kwane_crane.obj :	"c1_kwane_crane.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "c1_kwane_crane.c"
+kwane_crane_sfun_registry.obj :	"kwane_crane_sfun_registry.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "kwane_crane_sfun_registry.c"
+lccstub.obj :	"C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\mex\lccstub.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "C:\Program Files\MATLAB\R2016b\sys\lcc64\lcc64\mex\lccstub.c"

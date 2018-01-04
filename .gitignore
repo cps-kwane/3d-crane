@@ -9,3 +9,5 @@ slprj/
 *.png
 
 runfiles_nadeen
+
+*.pyc
