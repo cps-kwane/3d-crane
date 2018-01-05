@@ -11,7 +11,7 @@ targets, obstacles = (3, '1'), (3, '-1')
 def neighbour_in_bound(x, y, array):
     for j in (-1, 0, 1):
         for i in (-1, 0, 1):
-            if (j, i) == (1, 0):
+            if (j, i) == (0, 0):
                 continue
             y0, x0 = y + j, x + i
             if (-1 in (y0, x0)) or (N in (y0, x0)):
@@ -32,7 +32,7 @@ def produce_fn():
                 y = random.randint(barrier + 0, N - 1 - barrier)
             array[y][x] = kind[1]
 
-    f = open("course_.csv", "w")
+    f = open("course_random.csv", "w")
     for j in range(N):
         for i in range(N):
             if array[j][i] != '-':

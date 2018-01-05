@@ -8,7 +8,7 @@ start_course = 1;
 
 %% Run
 % Setup the model name
-model_name = 'high_level_v3';
+model_name = 'high_level_v4.slx';
 
 % Run the simulation
 simout = sim(model_name, 'FixedStep', num2str(Ts), 'ReturnWorkspaceOutputs', 'on');
