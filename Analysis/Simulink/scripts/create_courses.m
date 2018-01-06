@@ -8,9 +8,9 @@ if (course == 0)
     if (ret ~= 2)
         error('return code is not 2. Something should be wrong');
     end
-    filename = "course_.csv";
+    filename = 'course_random.csv';
 else
-    filename = strcat('samples/my_course', string(course), '.csv');
+    filename = ['samples/my_course' num2str(course) '.csv'];
 end
 
 [obstacles, targets] = getCourseFromCSV(filename);

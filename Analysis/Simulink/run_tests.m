@@ -8,15 +8,19 @@
 clear variables;
 close all;
 clc;
+addpath('scripts');
+P = py.sys.path;
+if count(P, [pwd '/scripts']) ~= 1
+  insert(P, int32(0), [pwd '/scripts']);
+end
+
 % setup model
 software_setup;
 
-P = py.sys.path;
-insert(P, int32(0), 'scripts');
 
 % parameters
 NUM_SAMPLES = size(dir('samples/*.csv'), 1);
-NUM_RANDOM_TESTS = 3;
+NUM_RANDOM_TESTS = 0;
 NUM_TESTS = NUM_SAMPLES + NUM_RANDOM_TESTS;
 NUM_TARGETS = 3;
 NUM_OBSTACLES = 3;
@@ -25,8 +29,8 @@ MAX_NUM_OBSTACLES = 10;
 % RANDOM_START = 1;
 % RANGE = [3, 47];
 
-fprintf("Number of tests: %d\n", NUM_TESTS);
-fprintf("Start!\n");
+fprintf('Number of tests: %d\n', NUM_TESTS);
+fprintf('Start!\n');
 
 % statistics
 targetsReached = 0;
@@ -38,6 +42,7 @@ outOfAngles = zeros(NUM_TESTS, 1);
 allTargets = cell(NUM_TESTS);
 allObstacles = cell(NUM_TESTS);
 times = zeros(1, NUM_TESTS);
+solveTimes = zeros(1, NUM_TESTS);
 scores = zeros(1, NUM_TESTS);
 payloadXs = cell(NUM_TESTS);
 payloadYs = cell(NUM_TESTS);
@@ -46,20 +51,21 @@ alphaYs = cell(NUM_TESTS);
 
 %% Main Loop
 for i = 1:NUM_TESTS
-    fprintf("Running test #%4d ... ", i);
+    fprintf('Running test #%4d ... ', i);
     
+    %% Generate Courses
     if i <= NUM_SAMPLES
       course = i;
     else
       course = 0;
     end
-    [obstacles, targets, course_filename] = create_courses(course)
+    [obstacles, targets, course_filename] = create_courses(course);
+    
     allTargets{i} = targets;
     allObstacles{i} = obstacles;
     
     tic;
-    [xwaypoints, ywaypoints] = generate_waypoints(course_filename)
-    run;
+    run;  
     times(i) = toc;
     scores(i) = mscore;
     
@@ -69,10 +75,10 @@ for i = 1:NUM_TESTS
     alphaYs{i} = alphaY;
 
     % check out of border
-    outOfBorder(i) = sum(payloadX < .03 | payloadY < .03 | ...
-                         payloadX > .47 | payloadY > .47) ~= ...
+    outOfBorder(i) = sum(payloadX < .02 | payloadY < .02 | ...
+                         payloadX > .48 | payloadY > .48) ~= ...
                      0;
-    outOfAngles(i) = sum(abs(alphaX) < 5e-3 & abs(alphaY) < 5e-3) ...
+    outOfAngles(i) = sum(abs(alphaX) < .15 & abs(alphaY) < .15) ...
                      ~= size(alphaX, 1);
     
     % Updated targets reached
@@ -85,23 +91,23 @@ for i = 1:NUM_TESTS
       hit = 'Hit';
     end
 
-    fprintf("Score: %10.6f Time %f s %s\n", scores(i), times(i), hit);
-    save(sprintf("results/data_%d.mat", i), 'targets', 'obstacles',...
+    fprintf('Score: %10.6f Time %f s %s\n', scores(i), times(i), hit);
+    save(sprintf('results/data_%d.mat', i), 'targets', 'obstacles',...
          'xwaypoints', 'ywaypoints', 'payloadX', 'payloadY',...
          'alphaX', 'alphaY', 'tarN', 'obsN');
 end
 
-fprintf("Done!\n");
+fprintf('Done!\n');
 
-fprintf("Total runtime:              %.2f s\n", sum(times));
-fprintf("Average runtime:            %.2f s\n", mean(times));
-fprintf("Maximum runtime:            %.2f s\n", max(times));
-fprintf("Average score:              %.2f\n", mean(scores));
-fprintf("Maximum score:              %.2f\n", max(scores));
-fprintf("Out of border percentage:   %.2f%%\n", sum(outOfBorder) / NUM_TESTS * 100);
-fprintf("Out of angle percentage:    %.2f%%\n", sum(outOfAngles) / NUM_TESTS * 100);
-fprintf("Targets reached percentage: %.2f%%\n", targetsReached / NUM_TESTS * 100);
-fprintf("Obstacles hit percentage:   %.2f%%\n", obstaclesHitted / NUM_TESTS * 100);
+fprintf('Total runtime:              %.2f s\n', sum(times));
+fprintf('Average runtime:            %.2f s\n', mean(times));
+fprintf('Maximum runtime:            %.2f s\n', max(times));
+fprintf('Average score:              %.2f\n', mean(scores));
+fprintf('Maximum score:              %.2f\n', max(scores));
+fprintf('Out of border percentage:   %.2f%%\n', sum(outOfBorder) / NUM_TESTS * 100);
+fprintf('Out of angle percentage:    %.2f%%\n', sum(outOfAngles) / NUM_TESTS * 100);
+fprintf('Targets reached percentage: %.2f%%\n', targetsReached / NUM_TESTS * 100);
+fprintf('Obstacles hit percentage:   %.2f%%\n', obstaclesHitted / NUM_TESTS * 100);
 
 
 
@@ -110,10 +116,10 @@ fprintf("Obstacles hit percentage:   %.2f%%\n", obstaclesHitted / NUM_TESTS * 10
 for i = 1:NUM_TESTS
   f = figure;
   hold on;
-  
+  set(f, 'Visible', 'off');
   h = plot(payloadXs{i} * 100, payloadYs{i} * 100);
-  scatter(allTargets{i}, allTargets{i});
-  scatter(allObstacles{i}, allObstacles{i}, 'x');
+  scatter(allTargets{i}(:, 1), allTargets{i}(:, 2));
+  scatter(allObstacles{i}(:, 1), allObstacles{i}(:, 2), 'x');
   
   title(sprintf('CASE %d', i));
   xlim([0 50]);

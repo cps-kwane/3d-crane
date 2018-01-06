@@ -16,12 +16,12 @@ ywaypoints = zeros(size(waypoints_list));
 tags = zeros(size(waypoints_list));
 
 for i=1:total_waypoints
-    xwaypoints_cell{i} = waypoints_cell{i}{1};
-    ywaypoints_cell{i} = waypoints_cell{i}{2};
-    tags_cell{i} = waypoints_cell{i}{3};
+  xwaypoints_cell{i} = waypoints_cell{i}{1};
+  ywaypoints_cell{i} = waypoints_cell{i}{2};
+  tags_cell{i} = waypoints_cell{i}{3};
 	xwaypoints(i) = double(xwaypoints_cell{i}) / 100;
 	ywaypoints(i) = double(ywaypoints_cell{i}) / 100;
-    tags(i) = double(tags_cell{i});
+  tags(i) = double(tags_cell{i});
 end
 
 end
