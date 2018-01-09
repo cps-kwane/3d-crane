@@ -20,7 +20,7 @@ software_setup;
 
 % parameters
 NUM_SAMPLES = size(dir('samples/*.csv'), 1);
-NUM_RANDOM_TESTS = 100;
+NUM_RANDOM_TESTS = 10000;
 NUM_TESTS = NUM_SAMPLES + NUM_RANDOM_TESTS;
 NUM_TARGETS = 3;
 NUM_OBSTACLES = 3;
@@ -62,7 +62,7 @@ for i = 1:NUM_TESTS
     [obstacles, targets, course_filename] = create_courses(course);
     if course == 0
       copyfile(course_filename, ...
-               ['results/course_' num2str(i - NUM_SAMPLES) '.csv']);
+               ['results/course_' num2str(i) '.csv']);
     end
     allTargets{i} = targets;
     allObstacles{i} = obstacles;
