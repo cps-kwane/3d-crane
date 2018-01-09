@@ -1,7 +1,7 @@
 function [xwaypoints, ywaypoints] = generate_waypoints(course_file)
 % GENERATE_WAYPOINTS generate waypoints from given obstacles and targets.
 
-waypoints_list = py.solve_course_pls.find_result(course_file);
+waypoints_list = py.solve_course_csv.find_result(course_file);
 
 %% Provide Inputs to Software Model
 % Convert python list to matlab datastruct
