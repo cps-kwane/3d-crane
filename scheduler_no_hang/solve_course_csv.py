@@ -220,7 +220,7 @@ def find_result(filename):
 		if not min_path_ is None:
 			quantized_path+=min_path_
 		else: 
-			min_path[n+1] = min_path[n]
+			quantized_path+=[goal]#min_path[n+1] = min_path[n]
 	
 	if debug: print("%d/%d"%(len(min_path)-1, len(min_path)-1))
 
