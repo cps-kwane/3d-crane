@@ -19,8 +19,10 @@ software_setup;
 
 
 % parameters
+MODEL_NAME='high_level_v4_wo.slx';
+RESULTS_DIR = 'results_0110_200_v4_wo';
 NUM_SAMPLES = size(dir('samples/*.csv'), 1);
-NUM_RANDOM_TESTS = 10000;
+NUM_RANDOM_TESTS = 100;
 NUM_TESTS = NUM_SAMPLES + NUM_RANDOM_TESTS;
 NUM_TARGETS = 3;
 NUM_OBSTACLES = 3;
@@ -48,6 +50,11 @@ payloadXs = cell(NUM_TESTS);
 payloadYs = cell(NUM_TESTS);
 alphaXs = cell(NUM_TESTS);
 alphaYs = cell(NUM_TESTS);
+totalTargets = 0;
+totalObstacles = 0;
+
+mkdir(RESULTS_DIR);
+logFd = fopen([RESULTS_DIR '/results.log'], 'w');
 
 %% Main Loop
 for i = 1:NUM_TESTS
@@ -62,12 +69,13 @@ for i = 1:NUM_TESTS
     [obstacles, targets, course_filename] = create_courses(course);
     if course == 0
       copyfile(course_filename, ...
-               ['results/course_' num2str(i) '.csv']);
+               [RESULTS_DIR '/course_' num2str(i) '.csv']);
     end
     allTargets{i} = targets;
     allObstacles{i} = obstacles;
+    totalTargets = totalTargets + size(targets, 1);
+    totalObstacles = totalObstacles + size(obstacles, 1);
     
-    tic;
     run;  
     times(i) = toc;
     scores(i) = mscore;
@@ -90,44 +98,58 @@ for i = 1:NUM_TESTS
     obstaclesHitted = obstaclesHitted + obsN;
     
     hit = '';
+    miss = '';
     if obsN > 0
       hit = 'Hit';
     end
+    if tarN < size(targets, 1)
+      miss = 'Miss';
+    end
 
-    fprintf('Score: %10.6f Time %f s %s\n', scores(i), times(i), hit);
-    save(sprintf('results/data_%d.mat', i), 'targets', 'obstacles',...
+    fprintf('Score: %10.6f Time %f s %s %s\n', scores(i), times(i), hit, miss);
+    fprintf(logFd, 'Score: %10.6f Time %f s %s %s\n', scores(i), times(i), hit, miss);
+    save(sprintf('%s/data_%d.mat', RESULTS_DIR, i), 'targets', 'obstacles',...
          'xwaypoints', 'ywaypoints', 'payloadX', 'payloadY',...
          'alphaX', 'alphaY', 'tarN', 'obsN');
+     
+    % plot
+    f = figure;
+    hold on;
+    set(f, 'Visible', 'off');
+    h = plot(payloadXs{i} * 100, payloadYs{i} * 100);
+    scatter(allTargets{i}(:, 1), allTargets{i}(:, 2));
+    scatter(allObstacles{i}(:, 1), allObstacles{i}(:, 2), 'x');
+    for j = 1:size(targets, 1)
+        rectangle('Position',...
+                  [targets(j, 1) - 1, targets(j, 2) - 1,...
+                   2, 2]);
+    end
+    for j = 1:size(obstacles, 1)
+        rectangle('Position',...
+                  [obstacles(j, 1) - 1, obstacles(j, 2) - 1,...
+                   2, 2], 'EdgeColor', 'r');
+    end
+    title(sprintf('CASE %d', i));
+    xlim([0 50]);
+    ylim([0 50]);
+    hold off;
+
+    print(f, sprintf('%s/result_%d.jpg', RESULTS_DIR, i), '-djpeg');
 end
 
 fprintf('Done!\n');
 
-fprintf('Total runtime:              %.2f s\n', sum(times));
-fprintf('Average runtime:            %.2f s\n', mean(times));
-fprintf('Maximum runtime:            %.2f s\n', max(times));
-fprintf('Average score:              %.2f\n', mean(scores));
-fprintf('Maximum score:              %.2f\n', max(scores));
-fprintf('Out of border percentage:   %.2f%%\n', sum(outOfBorder) / NUM_TESTS * 100);
-fprintf('Out of angle percentage:    %.2f%%\n', sum(outOfAngles) / NUM_TESTS * 100);
-fprintf('Targets reached percentage: %.2f%%\n', targetsReached / NUM_TESTS * 100);
-fprintf('Obstacles hit percentage:   %.2f%%\n', obstaclesHitted / NUM_TESTS * 100);
+fprintf(logFd, 'Total runtime:              %.2f s\n', sum(times));
+fprintf(logFd, 'Average runtime:            %.2f s\n', mean(times));
+fprintf(logFd, 'Maximum runtime:            %.2f s\n', max(times));
+fprintf(logFd, 'Average score:              %.2f\n', mean(scores));
+fprintf(logFd, 'Maximum score:              %.2f\n', max(scores));
+fprintf(logFd, 'Out of border percentage:   %.2f%%\n', sum(outOfBorder) / NUM_TESTS * 100);
+fprintf(logFd, 'Out of angle percentage:    %.2f%%\n', sum(outOfAngles) / NUM_TESTS * 100);
+fprintf(logFd, 'Targets reached percentage: %.2f%%\n', targetsReached / totalTargets * 100);
+fprintf(logFd, 'Obstacles hit percentage:   %.2f%%\n', obstaclesHitted / totalObstacles * 100);
 
+fclose(logFd);
 
 
 % allTargets = reshape(allTargets, NUM_TESTS * NUM_TARGETS, 2);
-% generate figure for each course
-for i = 1:NUM_TESTS
-  f = figure;
-  hold on;
-  set(f, 'Visible', 'off');
-  h = plot(payloadXs{i} * 100, payloadYs{i} * 100);
-  scatter(allTargets{i}(:, 1), allTargets{i}(:, 2));
-  scatter(allObstacles{i}(:, 1), allObstacles{i}(:, 2), 'x');
-  
-  title(sprintf('CASE %d', i));
-  xlim([0 50]);
-  ylim([0 50]);
-  hold off;
-
-  print(f, sprintf('results/result_%d.jpg', i), '-djpeg');
-end

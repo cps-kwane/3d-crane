@@ -11,7 +11,7 @@ start_course = 1;
 
 %% Run
 % Setup the model name
-model_name = 'high_level_v4.slx';
+model_name = MODEL_NAME;
 % model_name = '../../CPS_Crane_2018/software_model.slx';
 
 % Run the simulation

@@ -11,3 +11,4 @@ slprj/
 runfiles_nadeen
 
 *.pyc
+results*
